@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { projects } from '../data/projects';
 import ProjectCard from '../components/ProjectCard';
 import AnimatedPage from '../components/AnimatedPage';
@@ -30,12 +30,36 @@ const TechBadge: React.FC<{ name: string }> = ({ name }) => (
 const LandingPage: React.FC = () => {
   const featuredProjects = projects.slice(0, 2);
   const techStack = ["React", "TypeScript", "Node.js", "Tailwind CSS", "Framer Motion", "GraphQL", "Next.js", "Python"];
+  const heroImages = projects.slice(0, 4).map(p => p.gallery[0]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // Change image every 5 seconds
+    return () => clearTimeout(timer);
+  }, [currentImageIndex, heroImages.length]);
 
   return (
     <AnimatedPage>
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(212,175,55,0.1),rgba(255,255,255,0))] -z-10"></div>
+      <section className="min-h-screen flex items-center justify-center text-center relative overflow-hidden bg-background">
+        <AnimatePresence>
+          <motion.img
+            key={currentImageIndex}
+            src={heroImages[currentImageIndex]}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.1 }}
+            transition={{ duration: 1.5, ease: [0.42, 0, 0.58, 1] }}
+            className="absolute inset-0 w-full h-full object-cover"
+            alt="Luxury project showcase"
+          />
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-black/60 z-0"></div>
+
         <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -57,6 +81,18 @@ const LandingPage: React.FC = () => {
             </Link>
           </motion.div>
         </motion.div>
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+          {heroImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+                currentImageIndex === index ? 'bg-gold' : 'bg-white/50 hover:bg-white/75'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </section>
 
       {/* About Me Section */}

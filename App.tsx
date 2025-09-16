@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import LandingPage from './pages/LandingPage';
 import ProjectListPage from './pages/ProjectListPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
+import ScrollToTopButton from './components/ScrollToTopButton';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -34,6 +35,7 @@ const App: React.FC = () => {
         </AnimatePresence>
       </main>
       <Footer />
+      <ScrollToTopButton />
     </HashRouter>
   );
 };
